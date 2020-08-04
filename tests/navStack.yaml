@@ -1,0 +1,55 @@
+import:
+  - name: LoginContentVariant, FlexiblePresentationFlow
+    source: ./existingCode
+screens:
+  FirstTimeUserExperience:
+    name: ftux
+    type: stack
+    parameterType: FtUxStackParamList
+    screens:
+      - Country
+      - Welcome
+      - Login:
+          parameterType: LoginRegisterParams
+          extends: FlexiblePresentationFlow
+          parameters:
+            - name: contentVariant
+              type: LoginContentVariant?
+            - name: startOnLogin
+              type: boolean?
+            - name: allowSkip
+              type: boolean?
+      - Intro
+      - Location
+  App:
+    name: app
+    screens:
+      - Main:
+          screens:
+            - Home
+            - FindGas:
+                screens:
+                  - StationList
+                  - StationDetail
+            - Challenges
+            - Savings:
+                screens:
+                  - Start
+                  - Enroll
+            - Car:
+                screens:
+                  - Drives
+                  - Parking
+                  - Vehicles
+      - Debug:
+          screens:
+            - Main
+      - LoginAndRegistration:
+          name: login
+          screens:
+            - Start
+            - Register
+            - Login
+            - Auth
+      - ModalWebView
+      - EditProfile
