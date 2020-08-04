@@ -125,7 +125,7 @@ function getParameterType({
   ].join('\n');
 }
 
-function imports(specs: Array<{ name: string; source: string; }>) {
+function imports(specs: Array<{ name: string; source: string }>) {
   return specs.map(({ name, source }) => `import { ${name} } from '${source}';`);
 }
 
