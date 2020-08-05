@@ -20,6 +20,7 @@ BuildTypes(sourceFilename).then((tsOutput) => {
     !fs.existsSync(destinationFilename) ||
     fs.readFileSync(destinationFilename, 'utf8') !== tsOutput
   ) {
+    console.log('Updating navigation types in', destinationFilename);
     fs.writeFileSync(destinationFilename, tsOutput, 'utf8');
   }
 });
