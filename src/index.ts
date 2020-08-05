@@ -80,6 +80,7 @@ function buildTypeAndLiteral(
         paramLists.push({
           type: entry.type || 'stack',
           typeName: entry.parameterListType,
+          defaultParameters: entry.defaultParameters,
           prefix: newTypePrefix,
           screens: entry.screens,
         });
