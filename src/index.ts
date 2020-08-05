@@ -99,14 +99,14 @@ function getParameter({ name, type }: { name: string; type: string }) {
 }
 
 function getScreenParameterType({ typeName, extends: extendInterface, parameters }: any) {
-  // If it has NO parameters, it is assumed to be an external or repeated reference
-  if (!parameters) {
+  // If it has NO parameters or extends, it is assumed to be an external or repeated reference
+  if (!parameters && !extendInterface) {
     return '';
   }
 
   return [
     `export interface ${typeName} ${extendInterface ? `extends ${extendInterface} ` : ''}{`,
-    ...parameters.map(getParameter),
+    ...(parameters || []).map(getParameter),
     '}',
   ].join('\n');
 }
