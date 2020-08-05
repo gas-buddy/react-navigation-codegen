@@ -23,7 +23,7 @@ function resolveConfig(source: string) {
     case '.yaml':
       return yaml.safeLoad(fs.readFileSync(source, 'utf8'));
     case '.js':
-      return require(source).default || require(source);
+      return require(path.resolve(source)).default || require(path.resolve(source));
     default:
       throw new Error('Unkown input format');
   }
