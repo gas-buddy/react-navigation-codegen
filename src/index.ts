@@ -51,7 +51,7 @@ function buildTypeAndLiteral(
 
     if (entry.parameterType) {
       const isDef = entry.parameters || entry.extends;
-      const exists = paramLists.find(p => p.typeName === entry.parameterType);
+      const exists = paramLists.find((p) => p.typeName === entry.parameterType);
       if (!isDef || !exists) {
         paramLists.push({
           type: 'screen',
@@ -127,7 +127,7 @@ function getNavigatorParameterType({ typeName, defaultParameters, prefix, screen
     ...screens.map(
       (screen: any) =>
         `[Nav.${prefix}.${screen.jsName}${screen.screens ? '.$name' : ''}]: ${
-        screen.parameterType || defaultParameters || 'undefined'
+          screen.parameterType || defaultParameters || 'undefined'
         };`,
     ),
     '}\n',
@@ -157,14 +157,14 @@ export default async function BuildTypes(spec: any, prettierConfigSourceFile: st
   }
 
   ${paramLists
-      .filter((p) => p.type === 'screen')
-      .map(getScreenParameterType)
-      .join('\n')}
+    .filter((p) => p.type === 'screen')
+    .map(getScreenParameterType)
+    .join('\n')}
 
   ${paramLists
-      .filter((p) => p.type !== 'screen')
-      .map(getNavigatorParameterType)
-      .join('\n')}
+    .filter((p) => p.type !== 'screen')
+    .map(getNavigatorParameterType)
+    .join('\n')}
   `;
 
   const options = await prettier.resolveConfig(prettierConfigSourceFile);
