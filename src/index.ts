@@ -72,7 +72,7 @@ function buildTypeAndLiteral(
       const newTypePrefix = typePrefix ? `${typePrefix}.${entry.jsName}` : entry.jsName;
       buildTypeAndLiteral(
         entry.screens,
-        newPathPrefix,
+        entry.noPrefix ? '' : newPathPrefix,
         newTypePrefix,
         typeLines,
         literalLines,

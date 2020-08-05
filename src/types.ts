@@ -22,6 +22,8 @@ export interface NavigatorSpec extends ScreenSpec {
   parameterListType?: string;
   // If each screen should receive a certain parameter type, list it here
   defaultParameters?: string;
+  // Do not prefix paths of this navigator
+  noPrefix?: boolean;
   // The screens that are part of this navigator
   screens: { [key: string]: ScreenOrNavigator } | Array<ScreenOrNavigator>;
 }
