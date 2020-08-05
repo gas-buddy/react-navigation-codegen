@@ -1,6 +1,6 @@
 {
   "name": "@gasbuddy/react-navigation-codegen",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Type safe code generation for react-navigation based apps",
   "main": "build/index.js",
   "bin": "build/cli.js",
@@ -61,7 +61,6 @@
   "dependencies": {
     "js-yaml": "^3.14.0",
     "minimist": "^1.2.5",
-    "prettier": "^2.0.5",
-    "typescript-require": "^0.3.0"
+    "prettier": "^2.0.5"
   }
 }

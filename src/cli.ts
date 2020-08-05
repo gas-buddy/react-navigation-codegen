@@ -24,9 +24,6 @@ function resolveConfig(source: string) {
       return yaml.safeLoad(fs.readFileSync(source, 'utf8'));
     case '.js':
       return require(source).default || require(source);
-    case '.ts':
-      require('typescript-require');
-      return require(source).default;
     default:
       throw new Error('Unkown input format');
   }
