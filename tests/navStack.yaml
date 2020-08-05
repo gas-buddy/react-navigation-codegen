@@ -5,7 +5,7 @@ screens:
   FirstTimeUserExperience:
     name: ftux
     type: stack
-    parameterType: FtUxStackParamList
+    parameterListType: FtUxStackParamList
     screens:
       - Country
       - Welcome
@@ -23,6 +23,7 @@ screens:
       - Location
   App:
     name: app
+    parameterListType: AppParamList
     screens:
       - Main:
           screens:
@@ -46,6 +47,7 @@ screens:
             - Main
       - LoginAndRegistration:
           name: login
+          parameterType: LoginRegisterParams
           screens:
             - Start
             - Register

@@ -46,6 +46,16 @@ function buildTypeAndLiteral(
 ) {
   node.forEach((entry: any) => {
     const pathValue = `${pathPrefix}${pathPrefix ? '.' : ''}${entry.path}`;
+
+    if (entry.parameterType) {
+      paramLists.push({
+        type: 'screen',
+        typeName: entry.parameterType,
+        extends: entry.extends,
+        parameters: entry.parameters,
+      });
+    }
+
     if (entry.screens) {
       typeLines.push(`${entry.jsName}: {`);
       typeLines.push(`$name: '${pathValue}';`);
@@ -66,10 +76,10 @@ function buildTypeAndLiteral(
       typeLines.push('};');
       literalLines.push('},');
 
-      if (entry.parameterType) {
+      if (entry.parameterListType) {
         paramLists.push({
           type: entry.type || 'stack',
-          typeName: entry.parameterType,
+          typeName: entry.parameterListType,
           prefix: newTypePrefix,
           screens: entry.screens,
         });
@@ -77,15 +87,6 @@ function buildTypeAndLiteral(
     } else {
       typeLines.push(`${entry.jsName}: '${pathValue}';`);
       literalLines.push(`${entry.jsName}: '${pathValue}',`);
-
-      if (entry.parameterType) {
-        paramLists.push({
-          type: 'screen',
-          typeName: entry.parameterType,
-          extends: entry.extends,
-          parameters: entry.parameters,
-        });
-      }
     }
   });
 }
@@ -97,31 +98,29 @@ function getParameter({ name, type }: { name: string; type: string }) {
   return `${name}: ${type};`;
 }
 
-function getParameterType({
-  type,
-  typeName,
-  extends: extendInterface,
-  defaultParameters,
-  prefix,
-  screens,
-  parameters,
-}: any) {
-  if (type === 'screen') {
-    return [
-      `export interface ${typeName} ${extendInterface ? `extends ${extendInterface} ` : ''}{`,
-      ...parameters.map(getParameter),
-      '}',
-    ].join('\n');
+function getScreenParameterType({ typeName, extends: extendInterface, parameters }: any) {
+  // If it has NO parameters, it is assumed to be an external or repeated reference
+  if (!parameters) {
+    return '';
   }
+
+  return [
+    `export interface ${typeName} ${extendInterface ? `extends ${extendInterface} ` : ''}{`,
+    ...parameters.map(getParameter),
+    '}',
+  ].join('\n');
+}
+
+function getNavigatorParameterType({ typeName, defaultParameters, prefix, screens }: any) {
   return [
     `export type ${typeName} = {`,
     ...screens.map(
       (screen: any) =>
-        `[Nav.${prefix}.${screen.jsName}]: ${
+        `[Nav.${prefix}.${screen.jsName}${screen.screens ? '.$name' : ''}]: ${
           screen.parameterType || defaultParameters || 'undefined'
         };`,
     ),
-    '}',
+    '}\n',
   ].join('\n');
 }
 
@@ -151,12 +150,12 @@ export default async function BuildTypes(sourceFilename: string) {
 
   ${paramLists
     .filter((p) => p.type === 'screen')
-    .map(getParameterType)
+    .map(getScreenParameterType)
     .join('\n')}
 
   ${paramLists
     .filter((p) => p.type !== 'screen')
-    .map(getParameterType)
+    .map(getNavigatorParameterType)
     .join('\n')}
   `;
 

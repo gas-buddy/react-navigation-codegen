@@ -109,3 +109,11 @@ export type FtUxStackParamList = {
   [Nav.FirstTimeUserExperience.Intro]: undefined;
   [Nav.FirstTimeUserExperience.Location]: undefined;
 };
+
+export type AppParamList = {
+  [Nav.App.Main.$name]: undefined;
+  [Nav.App.Debug.$name]: undefined;
+  [Nav.App.LoginAndRegistration.$name]: LoginRegisterParams;
+  [Nav.App.ModalWebView]: undefined;
+  [Nav.App.EditProfile]: undefined;
+};

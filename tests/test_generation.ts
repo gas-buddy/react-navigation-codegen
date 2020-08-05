@@ -1,8 +1,7 @@
 import fs from 'fs';
 import tap from 'tap';
 import path from 'path';
-// TODO not sure why I can't run against src...
-import buildCode from '../build/index';
+import buildCode from '../src/index';
 
 tap.test('test_generation', async (test) => {
   const gen = await buildCode(path.resolve(__dirname, 'navStack.yaml'));
