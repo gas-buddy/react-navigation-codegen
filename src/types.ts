@@ -20,6 +20,8 @@ export interface NavigatorSpec extends ScreenSpec {
   type?: 'stack' | 'nativeStack' | 'drawer' | 'bottomTab' | 'materialBottomTab' | 'materialTopTab';
   // The type of the navigator screen list parameters
   parameterListType?: string;
+  // If each screen should receive a certain parameter type, list it here
+  defaultParameters?: string;
   // The screens that are part of this navigator
   screens: { [key: string]: ScreenOrNavigator } | Array<ScreenOrNavigator>;
 }
@@ -31,4 +33,5 @@ export interface ImportSpec {
 
 export interface NavigationSpecification extends NavigatorSpec {
   import: Array<ImportSpec>;
+  preamble?: string;
 }

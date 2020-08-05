@@ -145,7 +145,7 @@ export default async function BuildTypes(spec: any, prettierConfigSourceFile: st
 
   buildTypeAndLiteral(normalize(spec.screens), '', '', type, literal, paramLists);
 
-  const output = `
+  const output = `${spec.preamble || ''}
   ${imports(spec.import).join('\n')}
 
   export interface NavType {
