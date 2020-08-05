@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import fs from 'fs';
+import path from 'path';
+import yaml from 'js-yaml';
 import assert from 'assert';
 import minimist from 'minimist';
 import BuildTypes from './index';
@@ -15,7 +17,24 @@ USAGE:
 assert(sourceFilename, usage);
 assert(destinationFilename, usage);
 
-BuildTypes(sourceFilename).then((tsOutput) => {
+function resolveConfig(source: string) {
+  switch (path.extname(source)) {
+    case '.yml':
+    case '.yaml':
+      return yaml.safeLoad(fs.readFileSync(source, 'utf8'));
+    case '.js':
+      return require(source).default || require(source);
+    case '.ts':
+      require('typescript-require');
+      return require(source).default;
+    default:
+      throw new Error('Unkown input format');
+  }
+}
+
+const resolvedConfig = resolveConfig(sourceFilename);
+
+BuildTypes(resolvedConfig, sourceFilename).then((tsOutput) => {
   if (
     !fs.existsSync(destinationFilename) ||
     fs.readFileSync(destinationFilename, 'utf8') !== tsOutput

@@ -1,6 +1,7 @@
 # Custom
 .transpiled
 .nyc_output
+tmp
 
 # Wercker
 .wercker

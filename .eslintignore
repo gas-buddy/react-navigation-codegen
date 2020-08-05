@@ -3,3 +3,4 @@ build/
 .wercker
 coverage
 parser.js
+tmp

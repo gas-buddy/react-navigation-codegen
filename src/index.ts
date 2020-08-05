@@ -1,6 +1,5 @@
-import fs from 'fs';
-import yaml from 'js-yaml';
 import prettier from 'prettier';
+export * from './types';
 
 function normalize(spec: any) {
   return Object.entries(spec).map(([key, value]) => {
@@ -18,6 +17,9 @@ function normalize(spec: any) {
             agg[entry] = entry;
           } else if (typeof entry === 'object' && Object.keys(entry).length === 1) {
             agg[Object.keys(entry)[0]] = entry[Object.keys(entry)[0]];
+          } else if (typeof entry === 'object' && entry.id) {
+            const { id, ...restArgs } = entry;
+            agg[id] = restArgs;
           } else {
             console.log('Unknown screen entry format', entry);
           }
@@ -129,9 +131,7 @@ function imports(specs: Array<{ name: string; source: string }>) {
   return specs.map(({ name, source }) => `import { ${name} } from '${source}';`);
 }
 
-export default async function BuildTypes(sourceFilename: string) {
-  const spec: any = yaml.safeLoad(fs.readFileSync(sourceFilename, 'utf8'));
-
+export default async function BuildTypes(spec: any, prettierConfigSourceFile: string) {
   const paramLists: Array<any> = [];
   const type: Array<string> = [];
   const literal: Array<string> = [];
@@ -160,6 +160,6 @@ export default async function BuildTypes(sourceFilename: string) {
     .join('\n')}
   `;
 
-  const options = await prettier.resolveConfig(sourceFilename);
+  const options = await prettier.resolveConfig(prettierConfigSourceFile);
   return prettier.format(output, { parser: 'typescript', ...options });
 }

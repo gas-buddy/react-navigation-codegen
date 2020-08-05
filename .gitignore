@@ -2,6 +2,7 @@
 .transpiled
 .nyc_output
 /parser.js
+tmp
 
 # Wercker
 .wercker

@@ -1,12 +1,31 @@
 import fs from 'fs';
 import tap from 'tap';
+import yaml from 'js-yaml';
 import path from 'path';
 import buildCode from '../src/index';
 
+import 'typescript-require';
+
 tap.test('test_generation', async (test) => {
-  const gen = await buildCode(path.resolve(__dirname, 'navStack.yaml'));
+  const yamlPath = path.resolve(__dirname, 'specs/navStack.yaml');
+  const yamlSpec = yaml.safeLoad(fs.readFileSync(yamlPath, 'utf8'));
+  let gen = await buildCode(yamlSpec, yamlPath);
   test.ok(gen, 'Should generate code');
 
-  const snapshot = fs.readFileSync(path.resolve(__dirname, './snapshots/navStack.ts'), 'utf8');
+  let snapshot = fs.readFileSync(path.resolve(__dirname, './snapshots/navStack.ts'), 'utf8');
+  test.strictEquals(gen, snapshot, 'Expected unchanged output');
+
+  const tsSpec = require(path.resolve(__dirname, 'specs/navStackSpec.ts')).default;
+  gen = await buildCode(tsSpec, yamlPath);
+  test.ok(gen, 'Should generate code');
+
+  snapshot = fs.readFileSync(path.resolve(__dirname, './snapshots/navStack.ts'), 'utf8');
+  test.strictEquals(gen, snapshot, 'Expected unchanged output');
+
+  const jsSpec = require(path.resolve(__dirname, 'specs/navStackSpecJs.js'));
+  gen = await buildCode(jsSpec, yamlPath);
+  test.ok(gen, 'Should generate code');
+
+  snapshot = fs.readFileSync(path.resolve(__dirname, './snapshots/navStack.ts'), 'utf8');
   test.strictEquals(gen, snapshot, 'Expected unchanged output');
 });
