@@ -168,5 +168,5 @@ export default async function BuildTypes(spec: any, prettierConfigSourceFile: st
   `;
 
   const options = await prettier.resolveConfig(prettierConfigSourceFile);
-  return prettier.format(output, { parser: 'typescript', ...options });
+  return prettier.format(output, { ...options, parser: 'typescript' });
 }

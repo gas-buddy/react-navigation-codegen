@@ -11,7 +11,7 @@ const [sourceFilename, destinationFilename] = argv._;
 
 const usage = `
 USAGE:
-  npx react-navigation-codegen <source-fire> <destination-file>
+  npx react-navigation-codegen <source-file> <destination-file>
 `;
 
 assert(sourceFilename, usage);

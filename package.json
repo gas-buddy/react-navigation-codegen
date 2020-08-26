@@ -1,6 +1,6 @@
 {
   "name": "@gasbuddy/react-navigation-codegen",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Type safe code generation for react-navigation based apps",
   "main": "build/index.js",
   "bin": "build/cli.js",
@@ -33,12 +33,12 @@
     "@react-native-community/eslint-config": "^2.0.0",
     "@types/js-yaml": "^3.12.5",
     "@types/minimist": "^1.2.0",
-    "@types/node": "^14.0.23",
+    "@types/node": "^14.6.0",
     "@types/prettier": "^2.0.2",
     "@types/tap": "^14.10.0",
-    "@typescript-eslint/parser": "^3.6.1",
+    "@typescript-eslint/parser": "^3.10.1",
     "cross-env": "^7.0.0",
-    "eslint": "^7.4.0",
+    "eslint": "^7.7.0",
     "tap": "^14.10.7",
     "typescript": "^3.9.5"
   },
@@ -61,6 +61,6 @@
   "dependencies": {
     "js-yaml": "^3.14.0",
     "minimist": "^1.2.5",
-    "prettier": "^2.0.5"
+    "prettier": "^2.1.1"
   }
 }
