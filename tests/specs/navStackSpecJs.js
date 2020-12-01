@@ -3,6 +3,7 @@ module.exports = {
   screens: {
     FirstTimeUserExperience: {
       name: 'ftux',
+      analytics: 'FIRST_TIME_UX',
       type: 'stack',
       parameterListType: 'FtUxStackParamList',
       screens: [
@@ -10,6 +11,7 @@ module.exports = {
         'Welcome',
         {
           id: 'Login',
+          analytics: 'Login_Start',
           parameterType: 'LoginRegisterParams',
           extends: 'FlexiblePresentationFlow',
           parameters: [

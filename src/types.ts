@@ -14,6 +14,8 @@ export interface ScreenSpec {
   // The base type of the parameter object
   extends?: string;
   parameters?: Array<NavigationParameterSpec>;
+  // The name of the screen for analytics events (possibly will change to allow more settings)
+  analytics?: string;
 }
 
 export interface NavigatorSpec extends ScreenSpec {

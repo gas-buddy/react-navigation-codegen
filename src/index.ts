@@ -45,6 +45,7 @@ function buildTypeAndLiteral(
   typeLines: Array<string>,
   literalLines: Array<string>,
   paramLists: Array<any>,
+  analytics: Record<string, string>,
 ) {
   node.forEach((entry: any) => {
     const pathValue = `${pathPrefix}${pathPrefix ? '.' : ''}${entry.path}`;
@@ -62,6 +63,17 @@ function buildTypeAndLiteral(
       }
     }
 
+    if (entry.analytics) {
+      const jsIdent = [entry.jsName];
+      if (typePrefix) {
+        jsIdent.unshift(typePrefix);
+      }
+      if (entry.screens) {
+        jsIdent.push('$name');
+      }
+      analytics[jsIdent.join('.')] = entry.analytics;
+    }
+
     if (entry.screens) {
       typeLines.push(`${entry.jsName}: {`);
       typeLines.push(`$name: '${pathValue}';`);
@@ -77,6 +89,7 @@ function buildTypeAndLiteral(
         typeLines,
         literalLines,
         paramLists,
+        analytics,
       );
 
       typeLines.push('};');
@@ -142,8 +155,9 @@ export default async function BuildTypes(spec: any, prettierConfigSourceFile: st
   const paramLists: Array<any> = [];
   const type: Array<string> = [];
   const literal: Array<string> = [];
+  const analytics: Record<string, string> = {};
 
-  buildTypeAndLiteral(normalize(spec.screens), '', '', type, literal, paramLists);
+  buildTypeAndLiteral(normalize(spec.screens), '', '', type, literal, paramLists, analytics);
 
   const output = `${spec.preamble || ''}
   ${imports(spec.import).join('\n')}
@@ -154,6 +168,12 @@ export default async function BuildTypes(spec: any, prettierConfigSourceFile: st
 
   export const Nav: NavType = {
     ${literal.join('\n')}
+  }
+
+  export const Analytics = {
+    ${Object.entries(analytics)
+      .map(([js, str]) => `  [Nav.${js}]: '${str}',`)
+      .join('\n')}
   }
 
   ${paramLists
