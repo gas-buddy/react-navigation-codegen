@@ -15,7 +15,7 @@ export interface ScreenSpec {
   extends?: string;
   parameters?: Array<NavigationParameterSpec>;
   // The name of the screen for analytics events (possibly will change to allow more settings)
-  analytics?: string;
+  analytics?: string | false;
 }
 
 export interface NavigatorSpec extends ScreenSpec {

@@ -33,6 +33,7 @@ module.exports = {
             'Home',
             {
               id: 'FindGas',
+              analytics: false,
               screens: ['StationList', 'StationDetail'],
             },
             'Challenges',

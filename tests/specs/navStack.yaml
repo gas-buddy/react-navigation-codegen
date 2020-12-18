@@ -31,6 +31,7 @@ screens:
           screens:
             - Home
             - FindGas:
+                analytics: false
                 screens:
                   - StationList
                   - StationDetail

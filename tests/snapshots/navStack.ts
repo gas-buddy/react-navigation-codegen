@@ -99,6 +99,7 @@ export const Nav: NavType = {
 export const Analytics = {
   [Nav.FirstTimeUserExperience.$name]: 'FIRST_TIME_UX',
   [Nav.FirstTimeUserExperience.Login]: 'Login_Start',
+  [Nav.App.Main.FindGas.$name]: false,
 };
 
 export interface LoginRegisterParams extends FlexiblePresentationFlow {

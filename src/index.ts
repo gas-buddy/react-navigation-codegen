@@ -45,7 +45,7 @@ function buildTypeAndLiteral(
   typeLines: Array<string>,
   literalLines: Array<string>,
   paramLists: Array<any>,
-  analytics: Record<string, string>,
+  analytics: Record<string, string | false>,
 ) {
   node.forEach((entry: any) => {
     const pathValue = `${pathPrefix}${pathPrefix ? '.' : ''}${entry.path}`;
@@ -63,7 +63,7 @@ function buildTypeAndLiteral(
       }
     }
 
-    if (entry.analytics) {
+    if (entry.analytics || entry.analytics === false) {
       const jsIdent = [entry.jsName];
       if (typePrefix) {
         jsIdent.unshift(typePrefix);
@@ -155,7 +155,7 @@ export default async function BuildTypes(spec: any, prettierConfigSourceFile: st
   const paramLists: Array<any> = [];
   const type: Array<string> = [];
   const literal: Array<string> = [];
-  const analytics: Record<string, string> = {};
+  const analytics: Record<string, string | false> = {};
 
   buildTypeAndLiteral(normalize(spec.screens), '', '', type, literal, paramLists, analytics);
 
@@ -172,7 +172,7 @@ export default async function BuildTypes(spec: any, prettierConfigSourceFile: st
 
   export const Analytics = {
     ${Object.entries(analytics)
-      .map(([js, str]) => `  [Nav.${js}]: '${str}',`)
+      .map(([js, str]) => `  [Nav.${js}]: ${str === false ? 'false' : `'${str}'`},`)
       .join('\n')}
   }
 
