@@ -35,7 +35,6 @@ function resolveConfig(source: string) {
 const resolvedConfig = resolveConfig(sourceFilename);
 
 BuildTypes(resolvedConfig, sourceFilename).then((tsOutput) => {
-  console.log('TS\n', tsOutput);
   if (
     !fs.existsSync(destinationFilename) ||
     fs.readFileSync(destinationFilename, 'utf8') !== tsOutput
