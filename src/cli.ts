@@ -21,7 +21,7 @@ function resolveConfig(source: string) {
   switch (path.extname(source)) {
     case '.yml':
     case '.yaml':
-      return yaml.safeLoad(fs.readFileSync(source, 'utf8'));
+      return yaml.load(fs.readFileSync(source, 'utf8'));
     case '.js':
       return require(path.resolve(source)).default || require(path.resolve(source));
     case '.ts':
