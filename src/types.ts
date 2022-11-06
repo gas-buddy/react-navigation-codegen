@@ -1,4 +1,4 @@
-type ScreenOrNavigator = string | ScreenSpec | NavigatorSpec;
+export type ScreenOrNavigator = string | ScreenSpec | NavigatorSpec;
 
 export interface NavigationParameterSpec {
   name: string;
@@ -19,7 +19,7 @@ export interface ScreenSpec {
 }
 
 export interface NavigatorSpec extends ScreenSpec {
-  type?: 'stack' | 'nativeStack' | 'drawer' | 'bottomTab' | 'materialBottomTab' | 'materialTopTab';
+  type: 'stack' | 'nativeStack' | 'drawer' | 'bottomTab' | 'materialBottomTab' | 'materialTopTab';
   // The type of the navigator screen list parameters
   parameterListType?: string;
   // If each screen should receive a certain parameter type, list it here

@@ -24,6 +24,9 @@ function resolveConfig(source: string) {
       return yaml.safeLoad(fs.readFileSync(source, 'utf8'));
     case '.js':
       return require(path.resolve(source)).default || require(path.resolve(source));
+    case '.ts':
+      require('ts-node').register();
+      return require(path.resolve(source)).default || require(path.resolve(source));
     default:
       throw new Error('Unkown input format');
   }
@@ -32,6 +35,7 @@ function resolveConfig(source: string) {
 const resolvedConfig = resolveConfig(sourceFilename);
 
 BuildTypes(resolvedConfig, sourceFilename).then((tsOutput) => {
+  console.log('TS\n', tsOutput);
   if (
     !fs.existsSync(destinationFilename) ||
     fs.readFileSync(destinationFilename, 'utf8') !== tsOutput
