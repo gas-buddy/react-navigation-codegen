@@ -1,6 +1,5 @@
 build/
-# Wercker
-.wercker
+tests/snapshots
 coverage
 parser.js
 tmp
