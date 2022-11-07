@@ -16,6 +16,7 @@ interface ParameterList {
   parameters?: ScreenSpec['parameters'];
   defaultParameters?: NavigatorSpec['defaultParameters'];
   screens?: AnnotatedScreenSpec[];
+  parent?: AnnotatedScreenSpec,
 }
 
 interface ParsedSpec {
@@ -37,6 +38,7 @@ interface AnnotatedScreenSpec extends ScreenOptionalNavigator {
   jsName: string;
   path: string;
   screens?: AnnotatedScreenSpec[] | Record<string, AnnotatedScreenSpec>;
+  parent?: AnnotatedScreenSpec;
 }
 
 function removeScreens(value: NavigatorSpec | ScreenSpec) {
@@ -48,7 +50,7 @@ function removeScreens(value: NavigatorSpec | ScreenSpec) {
   return value;
 }
 
-function normalizeScreens(spec: NavigatorSpec['screens']): AnnotatedScreenSpec[] {
+function normalizeScreens(parent: AnnotatedScreenSpec | undefined, spec: NavigatorSpec['screens']): AnnotatedScreenSpec[] {
   return Object.entries(spec).map(([key, value]) => {
     if (!value) {
       return { jsName: key, path: key };
@@ -60,6 +62,7 @@ function normalizeScreens(spec: NavigatorSpec['screens']): AnnotatedScreenSpec[]
       ...removeScreens(value),
       jsName: key,
       path: value.name || key,
+      parent,
     };
     if ('screens' in value) {
       if (Array.isArray(value.screens)) {
@@ -81,9 +84,9 @@ function normalizeScreens(spec: NavigatorSpec['screens']): AnnotatedScreenSpec[]
             console.log('Unknown screen entry format', entry);
           }
         });
-        normalizedSpec.screens = normalizeScreens(screenMap);
+        normalizedSpec.screens = normalizeScreens(normalizedSpec, screenMap);
       } else {
-        normalizedSpec.screens = normalizeScreens(value.screens);
+        normalizedSpec.screens = normalizeScreens(normalizedSpec, value.screens);
       }
     }
 
@@ -91,7 +94,7 @@ function normalizeScreens(spec: NavigatorSpec['screens']): AnnotatedScreenSpec[]
   });
 }
 
-function buildTypeAndLiteral(node: AnnotatedScreenSpec[], state: ParsedSpec) {
+function buildTypeAndLiteral(parent: AnnotatedScreenSpec | undefined, node: AnnotatedScreenSpec[], state: ParsedSpec) {
   node.forEach((entry) => {
     const newPathPrefix = state.pathParent ? `${state.pathParent}.${entry.path}` : entry.path;
     const newTypePrefix = state.typeParent ? `${state.typeParent}.${entry.jsName}` : entry.jsName;
@@ -108,6 +111,7 @@ function buildTypeAndLiteral(node: AnnotatedScreenSpec[], state: ParsedSpec) {
           parameterType: entry.parameterType,
           extends: entry.extends,
           parameters: entry.parameters,
+          parent,
         });
       }
     }
@@ -129,7 +133,7 @@ function buildTypeAndLiteral(node: AnnotatedScreenSpec[], state: ParsedSpec) {
       };
       state.navEntries[entry.jsName] = screenNav;
 
-      buildTypeAndLiteral(entry.screens as AnnotatedScreenSpec[], {
+      buildTypeAndLiteral(entry, entry.screens as AnnotatedScreenSpec[], {
         ...state,
         pathParent: entry.noPrefix ? '' : newPathPrefix,
         typeParent: newTypePrefix,
@@ -149,6 +153,7 @@ function buildTypeAndLiteral(node: AnnotatedScreenSpec[], state: ParsedSpec) {
           parameters: entry.parameters,
           defaultParameters: entry.defaultParameters,
           screens: entry.screens as AnnotatedScreenSpec[],
+          parent,
         });
       }
     } else {
@@ -164,6 +169,10 @@ function getParameter({ name, type }: { name: string; type: string }) {
   return `${name}: ${type};`;
 }
 
+function parameterTypeWithoutOptional(type: string) {
+  return type.endsWith('?') ? type.substring(0, type.length - 1) : type;
+}
+
 function getScreenParameterType(params: ParameterList) {
   const { extends: xtend, parameters, parameterType } = params;
   // If it has NO parameters or extends, it is assumed to be an external or repeated reference
@@ -172,7 +181,7 @@ function getScreenParameterType(params: ParameterList) {
   }
 
   return [
-    `export interface ${parameterType} ${xtend ? `extends ${xtend} ` : ''}{`,
+    `export interface ${parameterTypeWithoutOptional(parameterType!)} ${xtend ? `extends ${xtend} ` : ''}{`,
     ...(parameters || []).map(getParameter),
     '}',
   ].join('\n');
@@ -184,17 +193,17 @@ function getNestedNavigatorParams(params: ParameterList, screen: AnnotatedScreen
     const prefix = screen.noPrefix ? '' : `${pathPrefix}.`;
     const nestRef = screen.id ? `$Nested['${screen.id}']` : `$Nested['${prefix}${screen.path}']`;
     if (screen.parameterType || defaultParameters) {
-      return (screen.parameterType || defaultParameters) + ` & ${nestRef}`;
+      return parameterTypeWithoutOptional((screen.parameterType || defaultParameters)!) + ` & ${nestRef}`;
     }
     return nestRef;
   }
-  return screen.parameterType || defaultParameters || 'undefined';
+  return parameterTypeWithoutOptional(screen.parameterType || defaultParameters || 'undefined');
 }
 
 function getNavigatorParameterType(args: ParameterList) {
   const { parameterType, screens, typePrefix } = args;
   return [
-    `export type ${parameterType} = {`,
+    `export type ${parameterTypeWithoutOptional(parameterType!)} = {`,
     ...screens!.map(
       (screen) =>
         `[Nav.${typePrefix}.${screen.jsName}${
@@ -224,18 +233,58 @@ function screenParameterReference(nav: ParameterList, screen: AnnotatedScreenSpe
       parameterType = `$Nested['${nav.pathPrefix}${nav.pathPrefix ? '.' : ''}${screen.path}']`;
     }
   }
-  if (parameterType === "$Nested['app.mobile-pay']") {
-    console.log('BAD ONE', screen);
-  }
   return `{ screen: '${nav.pathPrefix}.${screen.path}';
     ${parameterType ? `params${optional ? '?' : ''}: ${parameterType}` : ''}
   }`;
 }
 
 function getNestedScreenDeclaration(navigator: ParameterList) {
-  return `    '${navigator.id || navigator.pathPrefix}': ${navigator.screens
+  return `    '${navigator.id || navigator.pathPrefix}': {} | ${navigator.screens
     ?.map((s) => screenParameterReference(navigator, s))
     .join(' | ')};`;
+}
+
+function getComposites(navigator: AnnotatedScreenSpec): string {
+  if (navigator.parent) {
+    return `CompositeScreenProps<
+      StackScreenProps<${navigator.parameterListType}>,
+      ${getComposites(navigator.parent)}
+    >`;
+  }
+  return `StackScreenProps<${navigator.parameterListType}>`;
+}
+
+function getStackScreenNavTypes(navigator: ParameterList, typesWritten: Set<string>) {
+  if (!navigator.screens || !navigator.parameterType) {
+    return '';
+  }
+  return navigator.screens.map((screen) => {
+    let name: string;
+    let type: string;
+    if (screen.id) {
+      name = screen.id;
+    } else if (screen.noPrefix) {
+      name = screen.path;
+    } else {
+      name = `${navigator.pathPrefix}${navigator.pathPrefix ? '.' : ''}${screen.path}`;
+    }
+    if (typesWritten.has(name)) {
+      return undefined;
+    }
+    typesWritten.add(name);
+    if (navigator.parent) {
+      return `    '${name}': {
+        ScreenProps: CompositeScreenProps<
+          StackScreenProps<${navigator.parameterType}, typeof Nav.${navigator.typePrefix}.${screen.jsName}${screen.screens ? '.$name' : ''}>,
+          ${getComposites(navigator.parent)}
+        >;
+      }`;
+    } else {
+      return `    '${name}': {
+        ScreenProps: StackScreenProps<${navigator.parameterType}, typeof Nav.${navigator.typePrefix}.${screen.jsName}${screen.screens ? '.$name' : ''}>;
+      }`;
+    }
+  }).filter((i) => !!i).join(',\n');
 }
 
 export default async function BuildTypes(
@@ -251,9 +300,13 @@ export default async function BuildTypes(
     typeParent: '',
   };
 
-  buildTypeAndLiteral(normalizeScreens(spec.screens), state);
+  buildTypeAndLiteral(undefined, normalizeScreens(undefined, spec.screens), state);
+
+  const navTypesWritten = new Set<string>();
 
   const output = `${spec.preamble || ''}
+  import { StackScreenProps } from '@react-navigation/stack';
+  import { CompositeScreenProps } from '@react-navigation/native';
   ${imports(spec.import).join('\n')}
 
   // Screen names and structure
@@ -283,6 +336,14 @@ export default async function BuildTypes(
       .filter((p) => p.screens?.length)
       .map(getNestedScreenDeclaration)
       .join('\n')}
+  }
+
+  export interface NavTypes {
+    ${state.parameterLists
+      .filter((p) => p.type === 'stack')
+      .map((p) => getStackScreenNavTypes(p, navTypesWritten))
+      .join('\n')
+    }
   }
 `;
 

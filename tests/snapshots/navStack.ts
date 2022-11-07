@@ -1,3 +1,5 @@
+import { StackScreenProps } from '@react-navigation/stack';
+import { CompositeScreenProps } from '@react-navigation/native';
 import { LoginContentVariant, FlexiblePresentationFlow } from './existingCode';
 
 // Screen names and structure
@@ -82,35 +84,78 @@ export type AppParamList = {
 
 interface $Nested {
   ftux:
+    | {}
     | { screen: 'ftux.Country' }
     | { screen: 'ftux.Welcome' }
     | { screen: 'ftux.Login'; params: LoginRegisterParams }
     | { screen: 'ftux.Intro' }
     | { screen: 'ftux.Location' };
   'app.Main.FindGas':
+    | {}
     | { screen: 'app.Main.FindGas.StationList' }
     | { screen: 'app.Main.FindGas.StationDetail' };
-  'app.Main.Savings': { screen: 'app.Main.Savings.Start' } | { screen: 'app.Main.Savings.Enroll' };
+  'app.Main.Savings':
+    | {}
+    | { screen: 'app.Main.Savings.Start' }
+    | { screen: 'app.Main.Savings.Enroll' };
   'app.Main.Car':
+    | {}
     | { screen: 'app.Main.Car.Drives' }
     | { screen: 'app.Main.Car.Parking' }
     | { screen: 'app.Main.Car.Vehicles' };
   'app.Main':
+    | {}
     | { screen: 'app.Main.Home' }
     | { screen: 'app.Main.FindGas'; params?: $Nested['app.Main.FindGas'] }
     | { screen: 'app.Main.Challenges' }
     | { screen: 'app.Main.Savings'; params?: $Nested['app.Main.Savings'] }
     | { screen: 'app.Main.Car'; params?: $Nested['app.Main.Car'] };
-  'app.Debug': { screen: 'app.Debug.Main' };
+  'app.Debug': {} | { screen: 'app.Debug.Main' };
   'app.login':
+    | {}
     | { screen: 'app.login.Start' }
     | { screen: 'app.login.Register' }
     | { screen: 'app.login.Login' }
     | { screen: 'app.login.Auth' };
   app:
+    | {}
     | { screen: 'app.Main'; params?: $Nested['app.Main'] }
     | { screen: 'app.Debug'; params?: $Nested['app.Debug'] }
     | { screen: 'app.login'; params: $Nested['app.login'] }
     | { screen: 'app.ModalWebView' }
     | { screen: 'app.EditProfile' };
+}
+
+export interface NavTypes {
+  'ftux.Country': {
+    ScreenProps: StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Country>;
+  };
+  'ftux.Welcome': {
+    ScreenProps: StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Welcome>;
+  };
+  'ftux.Login': {
+    ScreenProps: StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Login>;
+  };
+  'ftux.Intro': {
+    ScreenProps: StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Intro>;
+  };
+  'ftux.Location': {
+    ScreenProps: StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Location>;
+  };
+
+  'app.Main': {
+    ScreenProps: StackScreenProps<AppParamList, typeof Nav.App.Main.$name>;
+  };
+  'app.Debug': {
+    ScreenProps: StackScreenProps<AppParamList, typeof Nav.App.Debug.$name>;
+  };
+  'app.login': {
+    ScreenProps: StackScreenProps<AppParamList, typeof Nav.App.LoginAndRegistration.$name>;
+  };
+  'app.ModalWebView': {
+    ScreenProps: StackScreenProps<AppParamList, typeof Nav.App.ModalWebView>;
+  };
+  'app.EditProfile': {
+    ScreenProps: StackScreenProps<AppParamList, typeof Nav.App.EditProfile>;
+  };
 }
