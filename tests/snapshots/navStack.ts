@@ -75,8 +75,8 @@ export type FtUxStackParamList = {
 };
 
 export type AppParamList = {
-  [Nav.App.Main.$name]: $Nested['app.Main'];
-  [Nav.App.Debug.$name]: $Nested['app.Debug'];
+  [Nav.App.Main.$name]: undefined | $Nested['app.Main'];
+  [Nav.App.Debug.$name]: undefined | $Nested['app.Debug'];
   [Nav.App.LoginAndRegistration.$name]: LoginRegisterParams & $Nested['app.login'];
   [Nav.App.ModalWebView]: undefined;
   [Nav.App.EditProfile]: undefined;
