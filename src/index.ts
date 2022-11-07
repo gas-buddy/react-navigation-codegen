@@ -245,7 +245,11 @@ function screenParameterReference(nav: ParameterList, screen: AnnotatedScreenSpe
     }
   }
   return `{ screen: '${nav.pathPrefix}.${screen.path}';
-    ${parameterType ? `params${optional ? '?' : ''}: ${parameterType}` : ''}
+    ${
+      parameterType
+        ? `params${optional ? '?' : ''}: ${parameterTypeWithoutOptional(parameterType)}`
+        : ''
+    }
   }`;
 }
 

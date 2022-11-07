@@ -1,6 +1,6 @@
 {
   "name": "@gasbuddy/react-navigation-codegen",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Type safe code generation for react-navigation based apps",
   "main": "build/index.js",
   "bin": "build/cli.js",
