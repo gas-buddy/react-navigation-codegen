@@ -301,24 +301,20 @@ function getStackScreenNavTypes(navigator: ParameterList, typesWritten: Set<stri
       }
       typesWritten.add(name);
       if (navigator.parent?.parameterListType) {
-        return `    '${name}': {
-        ScreenProps: CompositeScreenProps<
+        return `    '${name}': CompositeScreenProps<
           StackScreenProps<${navigator.parameterType}, typeof Nav.${navigator.typePrefix}${
           navigator.typePrefix ? '.' : ''
         }${screen.jsName}${screen.screens ? '.$name' : ''}>,
           ${getComposites(navigator.parent)}
-        >;
-      }`;
+        >;`;
       } else {
-        return `    '${name}': {
-        ScreenProps: StackScreenProps<${navigator.parameterType}, typeof Nav.${
+        return `    '${name}': StackScreenProps<${navigator.parameterType}, typeof Nav.${
           navigator.typePrefix
-        }${navigator.typePrefix ? '.' : ''}${screen.jsName}${screen.screens ? '.$name' : ''}>;
-      }`;
+        }${navigator.typePrefix ? '.' : ''}${screen.jsName}${screen.screens ? '.$name' : ''}>;`;
       }
     })
     .filter((i) => !!i)
-    .join(',\n');
+    .join('\n');
 }
 
 export default async function BuildTypes(
@@ -388,9 +384,9 @@ export default async function BuildTypes(
       .join('\n')}
   }
 
-  export interface NavTypes {
+  export interface ScreenProps {
     ${state.parameterLists
-      .filter((p) => p.type === 'stack')
+      .filter((p) => ['stack', 'bottomTab', 'materialTopTab'].includes(p.type))
       .map((p) => getStackScreenNavTypes(p, navTypesWritten))
       .join('\n')}
   }

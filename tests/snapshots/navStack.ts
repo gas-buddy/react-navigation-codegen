@@ -126,36 +126,19 @@ interface $Nested {
     | { screen: 'app.EditProfile' };
 }
 
-export interface NavTypes {
-  'ftux.Country': {
-    ScreenProps: StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Country>;
-  };
-  'ftux.Welcome': {
-    ScreenProps: StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Welcome>;
-  };
-  'ftux.Login': {
-    ScreenProps: StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Login>;
-  };
-  'ftux.Intro': {
-    ScreenProps: StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Intro>;
-  };
-  'ftux.Location': {
-    ScreenProps: StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Location>;
-  };
+export interface ScreenProps {
+  'ftux.Country': StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Country>;
+  'ftux.Welcome': StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Welcome>;
+  'ftux.Login': StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Login>;
+  'ftux.Intro': StackScreenProps<FtUxStackParamList, typeof Nav.FirstTimeUserExperience.Intro>;
+  'ftux.Location': StackScreenProps<
+    FtUxStackParamList,
+    typeof Nav.FirstTimeUserExperience.Location
+  >;
 
-  'app.Main': {
-    ScreenProps: StackScreenProps<AppParamList, typeof Nav.App.Main.$name>;
-  };
-  'app.Debug': {
-    ScreenProps: StackScreenProps<AppParamList, typeof Nav.App.Debug.$name>;
-  };
-  'app.login': {
-    ScreenProps: StackScreenProps<AppParamList, typeof Nav.App.LoginAndRegistration.$name>;
-  };
-  'app.ModalWebView': {
-    ScreenProps: StackScreenProps<AppParamList, typeof Nav.App.ModalWebView>;
-  };
-  'app.EditProfile': {
-    ScreenProps: StackScreenProps<AppParamList, typeof Nav.App.EditProfile>;
-  };
+  'app.Main': StackScreenProps<AppParamList, typeof Nav.App.Main.$name>;
+  'app.Debug': StackScreenProps<AppParamList, typeof Nav.App.Debug.$name>;
+  'app.login': StackScreenProps<AppParamList, typeof Nav.App.LoginAndRegistration.$name>;
+  'app.ModalWebView': StackScreenProps<AppParamList, typeof Nav.App.ModalWebView>;
+  'app.EditProfile': StackScreenProps<AppParamList, typeof Nav.App.EditProfile>;
 }
