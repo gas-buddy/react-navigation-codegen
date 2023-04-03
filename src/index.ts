@@ -363,7 +363,7 @@ export default async function BuildTypes(
     ${Object.entries(state.analytics)
       .map(([js, str]) => `  [Nav.${js}]: ${str === false ? 'false' : JSON.stringify(str)},`)
       .join('\n')}
-  };
+  } as const;
 
   // Screen parameter types
   ${state.parameterLists
