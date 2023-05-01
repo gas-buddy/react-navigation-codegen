@@ -2,6 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
+import mkdirp from 'mkdirp';
 import assert from 'assert';
 import minimist from 'minimist';
 import BuildTypes from './index';
@@ -40,6 +41,7 @@ BuildTypes(resolvedConfig, sourceFilename).then((tsOutput) => {
     fs.readFileSync(destinationFilename, 'utf8') !== tsOutput
   ) {
     console.log('Updating navigation types in', destinationFilename);
+    mkdirp.sync(path.dirname(destinationFilename));
     fs.writeFileSync(destinationFilename, tsOutput, 'utf8');
   }
 });
