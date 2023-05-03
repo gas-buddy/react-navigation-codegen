@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
-import mkdirp from 'mkdirp';
+import { mkdirp } from 'mkdirp';
 import assert from 'assert';
 import minimist from 'minimist';
 import BuildTypes from './index';
