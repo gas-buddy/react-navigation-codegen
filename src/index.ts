@@ -386,7 +386,7 @@ export default async function BuildTypes(
 
   export interface ScreenProps {
     ${state.parameterLists
-      .filter((p) => ['stack', 'bottomTab', 'materialTopTab'].includes(p.type))
+      .filter((p) => ['stack', 'drawer', 'bottomTab', 'materialTopTab'].includes(p.type))
       .map((p) => getStackScreenNavTypes(p, navTypesWritten))
       .join('\n')}
   }
