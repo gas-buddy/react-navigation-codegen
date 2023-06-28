@@ -1,60 +1,83 @@
-import:
-  - name: LoginContentVariant, FlexiblePresentationFlow
-    source: ./existingCode
 screens:
-  FirstTimeUserExperience:
-    name: ftux
-    analytics: 'FIRST_TIME_UX'
+  Welcome:
+    name: welcome
+    analytics: 'WELCOME'
     type: stack
-    parameterListType: FtUxStackParamList
+    parameterListType: WelcomeStackParamList
     screens:
-      - Country
-      - Welcome
+      - Introduction
       - Login:
-          analytics: Login_Start
-          parameterType: LoginRegisterParams
-          extends: FlexiblePresentationFlow
+          analytics: LOGIN
+          parameterType: LoginParams
+          extends: AuthenticationFlow
           parameters:
-            - name: contentVariant
-              type: LoginContentVariant?
-            - name: startOnLogin
+            - name: duplicateImport
+              type: DuplicateImport?
+            - name: optionalBoolean
               type: boolean?
-            - name: allowSkip
-              type: boolean?
-      - Intro
-      - Location
-  App:
-    name: app
-    parameterListType: AppParamList
+            - name: optionalString
+              type: string?
+          imports:
+            - name: AuthenticationFlow
+              source: same-source-import
+            - name: DuplicateImport
+              source: duplicate-import
+      - Signup
+  MainApp:
+    name: mainApp
+    parameterListType: MainAppStackParamList
     screens:
-      - Main:
+      - HomeStack:
           screens:
             - Home
-            - FindGas:
+            - Profile:
+                parameterType: ProfileParams
+                extends: UserProfileFlow
                 analytics: false
                 screens:
-                  - StationList
-                  - StationDetail
-            - Challenges
-            - Savings:
+                  - ProfileDetail
+                  - ProfileSetting
+                imports:
+                  - name: UserProfileFlow
+                    source: same-source-import
+            - Notification
+            - SettingsStack:
+                type: stack
                 screens:
-                  - Start
-                  - Enroll
-            - Car:
+                  - GeneralSettings
+                  - AccountSettings
+            - HelpStack:
                 screens:
-                  - Drives
-                  - Parking
-                  - Vehicles
-      - Debug:
+                  - HelpHome
+                  - FAQ
+                  - Contact
+                parameterType: HelpParams
+                parameters:
+                  - name: duplicateImport
+                    type: DuplicateImport
+                imports:
+                  - name: DuplicateImport
+                    source: duplicate-import
+      - Explore:
           screens:
-            - Main
-      - LoginAndRegistration:
-          name: login
-          parameterType: LoginRegisterParams
+            - Discover
+      - Shopping:
+          name: Shopping
+          parameterType: ShoppingParams
+          extends: ShoppingFlow
           screens:
-            - Start
-            - Register
-            - Login
-            - Auth
-      - ModalWebView
-      - EditProfile
+            - ShopHome
+            - Cart
+            - Checkout
+            - OrderConfirmation:
+                name: OrderConfirmation
+                analytics: ORDER_CONFIRMATION
+          imports:
+            - name: ShoppingFlow
+              source: same-source-import
+      - Social
+      - Messages:
+          analytics: false
+    imports:
+      - name: CommonImport1, CommonImport2
+        source: common-import

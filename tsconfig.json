@@ -46,5 +46,6 @@
   "exclude": [
     "node_modules",
     "build",
+    "./tests/snapshots",
   ]
 }

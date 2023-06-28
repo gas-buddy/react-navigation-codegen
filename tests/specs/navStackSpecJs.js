@@ -1,63 +1,130 @@
 module.exports = {
-  import: [{ name: 'LoginContentVariant, FlexiblePresentationFlow', source: './existingCode' }],
+  type: 'stack',
   screens: {
-    FirstTimeUserExperience: {
-      name: 'ftux',
-      analytics: 'FIRST_TIME_UX',
+    Welcome: {
+      name: 'welcome',
+      analytics: 'WELCOME',
       type: 'stack',
-      parameterListType: 'FtUxStackParamList',
-      screens: [
-        'Country',
-        'Welcome',
-        {
-          id: 'Login',
-          analytics: 'Login_Start',
-          parameterType: 'LoginRegisterParams',
-          extends: 'FlexiblePresentationFlow',
-          parameters: [
-            { name: 'contentVariant', type: 'LoginContentVariant?' },
-            { name: 'startOnLogin', type: 'boolean?' },
-            { name: 'allowSkip', type: 'boolean?' },
-          ],
-        },
-        'Intro',
-        'Location',
-      ],
-    },
-    App: {
-      name: 'app',
-      parameterListType: 'AppParamList',
+      parameterListType: 'WelcomeStackParamList',
       screens: {
-        Main: {
-          screens: [
-            'Home',
-            {
-              id: 'FindGas',
-              analytics: false,
-              screens: ['StationList', 'StationDetail'],
-            },
-            'Challenges',
-            {
-              id: 'Savings',
-              screens: ['Start', 'Enroll'],
-            },
-            {
-              id: 'Car',
-              screens: ['Drives', 'Parking', 'Vehicles'],
-            },
+        Introduction: {
+          name: 'Introduction',
+        },
+        Login: {
+          name: 'Login',
+          analytics: 'LOGIN',
+          parameterType: 'LoginParams',
+          extends: 'AuthenticationFlow',
+          parameters: [
+            { name: 'duplicateImport', type: 'DuplicateImport?' },
+            { name: 'optionalBoolean', type: 'boolean?' },
+            { name: 'optionalString', type: 'string?' },
+          ],
+          imports: [
+            { name: 'AuthenticationFlow', source: 'same-source-import' },
+            { name: 'DuplicateImport', source: 'duplicate-import' },
           ],
         },
-        Debug: {
-          screens: ['Main'],
+        Signup: {
+          name: 'Signup',
         },
-        LoginAndRegistration: {
-          name: 'login',
-          parameterType: 'LoginRegisterParams',
-          screens: ['Start', 'Register', 'Login', 'Auth'],
-        },
-        ModalWebView: {},
-        EditProfile: {},
       },
+    },
+    MainApp: {
+      name: 'mainApp',
+      parameterListType: 'MainAppStackParamList',
+      screens: {
+        HomeStack: {
+          type: 'stack',
+          screens: {
+            Home: {
+              name: 'Home',
+            },
+            Profile: {
+              name: 'Profile',
+              analytics: false,
+              parameterType: 'ProfileParams',
+              extends: 'UserProfileFlow',
+              screens: {
+                ProfileDetail: {
+                  name: 'ProfileDetail',
+                },
+                ProfileSetting: {
+                  name: 'ProfileSetting',
+                },
+              },
+              imports: [{ name: 'UserProfileFlow', source: 'same-source-import' }],
+            },
+            Notification: {
+              name: 'Notification',
+            },
+            SettingsStack: {
+              type: 'stack',
+              screens: {
+                GeneralSettings: {
+                  name: 'GeneralSettings',
+                },
+                AccountSettings: {
+                  name: 'AccountSettings',
+                },
+              },
+            },
+            HelpStack: {
+              screens: {
+                HelpHome: {
+                  name: 'HelpHome',
+                },
+                FAQ: {
+                  name: 'FAQ',
+                },
+                Contact: {
+                  name: 'Contact',
+                },
+              },
+              parameterType: 'HelpParams',
+              parameters: [{ name: 'duplicateImport', type: 'DuplicateImport' }],
+              imports: [{ name: 'DuplicateImport', source: 'duplicate-import' }],
+            },
+          },
+        },
+        Explore: {
+          type: 'stack',
+          screens: {
+            Discover: {
+              name: 'Discover',
+            },
+          },
+        },
+        Shopping: {
+          name: 'Shopping',
+          parameterType: 'ShoppingParams',
+          extends: 'ShoppingFlow',
+          screens: {
+            ShopHome: {
+              name: 'ShopHome',
+            },
+            Cart: {
+              name: 'Cart',
+            },
+            Checkout: {
+              name: 'Checkout',
+            },
+            OrderConfirmation: {
+              name: 'OrderConfirmation',
+              analytics: 'ORDER_CONFIRMATION',
+            },
+          },
+          imports: [{ name: 'ShoppingFlow', source: 'same-source-import' }],
+        },
+        Social: {
+          name: 'Social',
+        },
+        Messages: {
+          name: 'Messages',
+          analytics: false,
+        },
+      },
+      imports: [{ name: 'CommonImport1, CommonImport2', source: 'common-import' }],
     },
   },
 };

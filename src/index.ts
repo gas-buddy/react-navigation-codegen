@@ -1,5 +1,13 @@
 import prettier from 'prettier';
-import { NavigationSpecification, NavigatorSpec, ScreenOrNavigator, ScreenSpec } from './types';
+import {
+  NavigationSpecification,
+  NavigatorSpec,
+  ScreenOrNavigator,
+  ScreenSpec,
+  ImportSpecs,
+} from './types';
+import { getImportStatements } from './imports';
+
 export * from './types';
 
 interface ScreenNames {
@@ -39,6 +47,7 @@ interface AnnotatedScreenSpec extends ScreenOptionalNavigator {
   path: string;
   screens?: AnnotatedScreenSpec[] | Record<string, AnnotatedScreenSpec>;
   parent?: AnnotatedScreenSpec;
+  imports?: ImportSpecs[];
 }
 
 function removeScreens(value: NavigatorSpec | ScreenSpec) {
@@ -66,6 +75,7 @@ function normalizeScreens(
       jsName: key,
       path: value.name || key,
       parent,
+      imports: value.imports,
     };
     if ('screens' in value) {
       if (Array.isArray(value.screens)) {
@@ -235,13 +245,6 @@ function getNavigatorParameterType(args: ParameterList) {
   ].join('\n');
 }
 
-function imports(specs: string | Array<{ name: string; source: string }>) {
-  if (typeof specs === 'string') {
-    return [specs];
-  }
-  return specs.map(({ name, source }) => `import { ${name} } from '${source}';`);
-}
-
 function screenParameterReference(nav: ParameterList, screen: AnnotatedScreenSpec) {
   let { parameterType } = screen;
   let screenName = screen.parent?.noPrefix
@@ -335,6 +338,7 @@ export default async function BuildTypes(
     path: '',
     noPrefix: true,
     parameterListType: spec.parameterListType,
+    imports: [],
   };
   const rootScreens = normalizeScreens(rootSpec, spec.screens);
   if (spec.parameterListType) {
@@ -353,7 +357,7 @@ export default async function BuildTypes(
   const output = `${spec.preamble || ''}
   import { StackScreenProps } from '@react-navigation/stack';
   import { CompositeScreenProps } from '@react-navigation/native';
-  ${imports(spec.import).join('\n')}
+  ${getImportStatements(spec).join('\n')}
 
   // Screen names and structure
   export const Nav = ${JSON.stringify(state.navEntries, null, '\t')} as const;
