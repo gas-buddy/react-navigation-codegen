@@ -23,12 +23,14 @@ type RootStackParamList = {
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
+const instanceOfMyCustomType: MyCustomType = { /* ... */ };
+
 <RootStack.Navigator initialRouteName="Home">
   <RootStack.Screen name="Home" component={Home} />
   <RootStack.Screen
     name="Profile"
     component={Profile}
-    initialParams={{ userId: user.id, customTypeParam: new MyCustomType()}}
+    initialParams={{ userId: user.id, customTypeParam: instanceOfMyCustomType}} 
   />
   <RootStack.Screen name="Feed" component={Feed} />
 </RootStack.Navigator>
@@ -74,7 +76,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
   <RootStack.Screen
     name={Nav.Root.Profile}
     component={Profile}
-    initialParams={{ userId: user.id, customTypeParam: MyCustomType}}
+    initialParams={{ userId: user.id, customTypeParam: myCustomType}}
   />
   <RootStack.Screen name={Nav.Root.Feed} component={Feed} />
 </RootStack.Navigator>
