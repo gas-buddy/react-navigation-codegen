@@ -3,6 +3,10 @@ import { NavigationSpecification, ScreenOrNavigator, ImportSpec } from './types'
 export function getImports(spec: NavigationSpecification): ImportSpec[] {
   let imports: ImportSpec[] = [];
 
+  if (spec.import) {
+    imports = spec.import.flat(20) as ImportSpec[];
+  }
+
   Object.entries(spec.screens).forEach((curr) => {
     imports = imports.concat(getScreenImports(curr[1]));
   });
@@ -11,19 +15,23 @@ export function getImports(spec: NavigationSpecification): ImportSpec[] {
 }
 
 function getScreenImports(spec: ScreenOrNavigator): ImportSpec[] {
-  let specImports: ImportSpec[] = [];
-
   if (typeof spec !== 'object') {
     return [];
   }
 
   let currentSpec = Object.values(spec).length === 1 ? Object.values(spec)[0] : spec;
 
+  if (!currentSpec) {
+    return [];
+  }
+
+  let specImports: ImportSpec[] = [];
+
   if (currentSpec.imports?.length) {
     specImports = currentSpec.imports.flat(20) as ImportSpec[];
   }
 
-  if (typeof currentSpec === 'string' || !('screens' in currentSpec)) {
+  if ((currentSpec && typeof currentSpec === 'string') || !('screens' in currentSpec)) {
     return specImports;
   }
 
