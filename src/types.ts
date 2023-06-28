@@ -16,6 +16,8 @@ export interface ScreenSpec {
   parameters?: Array<NavigationParameterSpec>;
   // The name of the screen for analytics events (possibly will change to allow more settings)
   analytics?: string | false;
+  imports?: ImportSpecs[];
+  import?: ImportSpec[];
 }
 
 export interface NavigatorSpec extends ScreenSpec {
@@ -35,7 +37,8 @@ export interface ImportSpec {
   source: string;
 }
 
+export type ImportSpecs = ImportSpec | ImportSpecs[];
+
 export interface NavigationSpecification extends NavigatorSpec {
-  import: Array<ImportSpec>;
   preamble?: string;
 }

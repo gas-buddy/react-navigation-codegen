@@ -1,0 +1,82 @@
+screens:
+  FooScreen:
+    name: foo
+    analytics: 'FOO'
+    type: stack
+    parameterListType: FooStackParamList
+    screens:
+      - FooFoo
+      - FooBaz:
+          analytics: FOO_BAZ
+          parameterType: FooBazParams
+          extends: SameSourceImportA
+          parameters:
+            - name: duplicateImport
+              type: DuplicateImport?
+            - name: optionalBool
+              type: boolean?
+            - name: optionalString
+              type: string?
+          imports:
+            - name: SameSourceImportA
+              source: same-source-import
+            - name: DuplicateImport
+              source: duplicate-import
+      - FooBar
+  BarScreen:
+    name: bar
+    parameterListType: BarStackParamList
+    screens:
+      - BarFooStack:
+          screens:
+            - BarFooFoo
+            - BarFooBar:
+                parameterType: BarFooBarParams
+                extends: SameSourceImportB
+                analytics: false
+                screens:
+                  - BarFooBarFoo
+                  - BarFooBarBar
+                imports:
+                  - name: SameSourceImportB
+                    source: same-source-import
+            - BarFooBaz
+            - BarFooQuxStack:
+                type: stack
+                screens:
+                  - BarFooQuxFoo
+                  - BarFooQuxBar
+            - BarFooFredStack:
+                screens:
+                  - BarFooFredFoo
+                  - BarFooFredBar
+                  - BarFooFredBaz
+                parameterType: BarFooFredParams
+                parameters:
+                  - name: duplicateImport
+                    type: DuplicateImport
+                imports:
+                  - name: DuplicateImport
+                    source: duplicate-import
+      - BarBar:
+          screens:
+            - BarBarFoo
+      - BarBaz:
+          name: barBaz
+          parameterType: BarBazParams
+          extends: SameSourceImportC
+          screens:
+            - BarBazFoo
+            - BarBazBar
+            - BarBazBaz:
+                analytics: BAR_BAZ_BAZ
+            - BarBazQux:
+                analytics: false
+          imports:
+            - name: SameSourceImportC
+              source: same-source-import
+      - BarQux
+      - BarFred
+    imports:
+      - name: CommaImport1, CommaImport2
+        source: comma-import

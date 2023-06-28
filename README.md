@@ -7,11 +7,18 @@ A simple code generator to turn somewhat abstract specifications into TypeScript
 
 Input can be YAML, JS, JSON, or Typescript. Consider a typical navigation setup:
 
-```
+```tsx
+import { MyCustomType } from 'my-custom-type';
+
+
 type RootStackParamList = {
   Home: undefined;
-  Profile: { userId: string };
+  Profile: { 
+    userId: string, 
+    customTypeParam:MyCustomType 
+  };
   Feed: { sort: 'latest' | 'top' } | undefined;
+  
 };
 
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -21,7 +28,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
   <RootStack.Screen
     name="Profile"
     component={Profile}
-    initialParams={{ userId: user.id }}
+    initialParams={{ userId: user.id, customTypeParam: new MyCustomType()}}
   />
   <RootStack.Screen name="Feed" component={Feed} />
 </RootStack.Navigator>
@@ -29,7 +36,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
 
 With this module, you would specify as follows:
 
-```
+```ts
 export default {
   screens: {
     Root: {
@@ -37,11 +44,18 @@ export default {
       screens: {
         Home: {},
         Profile: {
-          parameterType: '{ userId: string }',
+          parameters: [
+              { name: 'userId',type: 'string'}, 
+              { name: 'customTypeParam', type: 'MyCustomType'},
+          ]
         },
         Feed: {
-          parameterType: '{ sort: 'latest' | 'top' } | undefined',
+          parameterType: "{ sort: 'latest' | 'top' } | undefined",
         }
+      },
+      imports: {
+        name: 'MyCustomType',
+        source: "my-custom-type",
       }
     }
   }
@@ -50,7 +64,9 @@ export default {
 
 And now your code becomes:
 
-```
+```tsx
+import { MyCustomType } from 'my-custom-type';
+
 const RootStack = createStackNavigator<RootStackParamList>();
 
 <RootStack.Navigator initialRouteName="Home">
@@ -58,7 +74,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
   <RootStack.Screen
     name={Nav.Root.Profile}
     component={Profile}
-    initialParams={{ userId: user.id }}
+    initialParams={{ userId: user.id, customTypeParam: new MyCustomType()}}
   />
   <RootStack.Screen name={Nav.Root.Feed} component={Feed} />
 </RootStack.Navigator>
