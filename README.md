@@ -74,7 +74,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
   <RootStack.Screen
     name={Nav.Root.Profile}
     component={Profile}
-    initialParams={{ userId: user.id, customTypeParam: new MyCustomType()}}
+    initialParams={{ userId: user.id, customTypeParam: MyCustomType}}
   />
   <RootStack.Screen name={Nav.Root.Feed} component={Feed} />
 </RootStack.Navigator>
