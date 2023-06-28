@@ -15,7 +15,8 @@
     "test": "tap --ts --no-coverage tests/*.ts",
     "cover": "nyc --reporter=lcov npm test",
     "lint": "eslint .",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "update-snapshot": "ts-node scripts/update-snapshot.ts"
   },
   "repository": {
     "type": "git",

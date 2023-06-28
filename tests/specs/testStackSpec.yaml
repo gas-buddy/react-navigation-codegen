@@ -1,0 +1,83 @@
+screens:
+  Welcome:
+    name: welcome
+    analytics: 'WELCOME'
+    type: stack
+    parameterListType: WelcomeStackParamList
+    screens:
+      - Introduction
+      - Login:
+          analytics: LOGIN
+          parameterType: LoginParams
+          extends: AuthenticationFlow
+          parameters:
+            - name: duplicateImport
+              type: DuplicateImport?
+            - name: optionalBoolean
+              type: boolean?
+            - name: optionalString
+              type: string?
+          imports:
+            - name: AuthenticationFlow
+              source: same-source-import
+            - name: DuplicateImport
+              source: duplicate-import
+      - Signup
+  MainApp:
+    name: mainApp
+    parameterListType: MainAppStackParamList
+    screens:
+      - HomeStack:
+          screens:
+            - Home
+            - Profile:
+                parameterType: ProfileParams
+                extends: UserProfileFlow
+                analytics: false
+                screens:
+                  - ProfileDetail
+                  - ProfileSetting
+                imports:
+                  - name: UserProfileFlow
+                    source: same-source-import
+            - Notification
+            - SettingsStack:
+                type: stack
+                screens:
+                  - GeneralSettings
+                  - AccountSettings
+            - HelpStack:
+                screens:
+                  - HelpHome
+                  - FAQ
+                  - Contact
+                parameterType: HelpParams
+                parameters:
+                  - name: duplicateImport
+                    type: DuplicateImport
+                imports:
+                  - name: DuplicateImport
+                    source: duplicate-import
+      - Explore:
+          screens:
+            - Discover
+      - Shopping:
+          name: Shopping
+          parameterType: ShoppingParams
+          extends: ShoppingFlow
+          screens:
+            - ShopHome
+            - Cart
+            - Checkout
+            - OrderConfirmation:
+                name: OrderConfirmation
+                analytics: ORDER_CONFIRMATION
+          imports:
+            - name: ShoppingFlow
+              source: same-source-import
+      - Social
+      - Messages:
+          analytics: false
+    imports:
+      - name: CommonImport1, CommonImport2
+        source: common-import
