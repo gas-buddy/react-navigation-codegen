@@ -301,8 +301,10 @@ function getStackScreenNavTypes(navigator: ParameterList, typesWritten: Set<stri
       }
       typesWritten.add(name);
       if (navigator.parent?.parameterListType) {
+        const sType =
+          navigator.type === 'nativeStack' ? 'NativeStackScreenProps' : 'StackScreenProps';
         return `    '${name}': CompositeScreenProps<
-          StackScreenProps<${navigator.parameterType}, typeof Nav.${navigator.typePrefix}${
+          ${sType}<${navigator.parameterType}, typeof Nav.${navigator.typePrefix}${
           navigator.typePrefix ? '.' : ''
         }${screen.jsName}${screen.screens ? '.$name' : ''}>,
           ${getComposites(navigator.parent)}
@@ -350,8 +352,18 @@ export default async function BuildTypes(
 
   const navTypesWritten = new Set<string>();
 
+  const hasStack = state.parameterLists.some((p) => p.type === 'stack');
+  const hasNativeStack = state.parameterLists.some((p) => p.type === 'nativeStack');
+  const typeImports = [];
+  if (hasNativeStack) {
+    typeImports.push("  import { NativeStackScreenProps } from '@react-navigation/native-stack';");
+  }
+  if (hasStack) {
+    typeImports.push("  import { StackScreenProps } from '@react-navigation/stack';");
+  }
+
   const output = `${spec.preamble || ''}
-  import { StackScreenProps } from '@react-navigation/stack';
+${typeImports.join('\n')}
   import { CompositeScreenProps } from '@react-navigation/native';
   ${imports(spec.import).join('\n')}
 
@@ -386,7 +398,9 @@ export default async function BuildTypes(
 
   export interface ScreenProps {
     ${state.parameterLists
-      .filter((p) => ['stack', 'drawer', 'bottomTab', 'materialTopTab'].includes(p.type))
+      .filter((p) =>
+        ['stack', 'nativeStack', 'drawer', 'bottomTab', 'materialTopTab'].includes(p.type),
+      )
       .map((p) => getStackScreenNavTypes(p, navTypesWritten))
       .join('\n')}
   }
