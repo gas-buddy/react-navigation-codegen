@@ -273,13 +273,14 @@ function getNestedScreenDeclaration(navigator: ParameterList) {
 }
 
 function getComposites(navigator: AnnotatedScreenSpec): string {
+  const type = navigator.type === 'nativeStack' ? 'NativeStackScreenProps' : 'StackScreenProps';
   if (navigator.parent?.parameterListType) {
     return `CompositeScreenProps<
-      StackScreenProps<${navigator.parameterListType}>,
+      ${type}<${navigator.parameterListType}>,
       ${getComposites(navigator.parent)}
     >`;
   }
-  return `StackScreenProps<${navigator.parameterListType}>`;
+  return `${type}<${navigator.parameterListType}>`;
 }
 
 function getStackScreenNavTypes(navigator: ParameterList, typesWritten: Set<string>) {
@@ -300,9 +301,9 @@ function getStackScreenNavTypes(navigator: ParameterList, typesWritten: Set<stri
         return undefined;
       }
       typesWritten.add(name);
+      const sType =
+        navigator.type === 'nativeStack' ? 'NativeStackScreenProps' : 'StackScreenProps';
       if (navigator.parent?.parameterListType) {
-        const sType =
-          navigator.type === 'nativeStack' ? 'NativeStackScreenProps' : 'StackScreenProps';
         return `    '${name}': CompositeScreenProps<
           ${sType}<${navigator.parameterType}, typeof Nav.${navigator.typePrefix}${
           navigator.typePrefix ? '.' : ''
@@ -310,7 +311,7 @@ function getStackScreenNavTypes(navigator: ParameterList, typesWritten: Set<stri
           ${getComposites(navigator.parent)}
         >;`;
       } else {
-        return `    '${name}': StackScreenProps<${navigator.parameterType}, typeof Nav.${
+        return `    '${name}': ${sType}<${navigator.parameterType}, typeof Nav.${
           navigator.typePrefix
         }${navigator.typePrefix ? '.' : ''}${screen.jsName}${screen.screens ? '.$name' : ''}>;`;
       }
@@ -336,12 +337,13 @@ export default async function BuildTypes(
     jsName: '',
     path: '',
     noPrefix: true,
+    type: spec.type,
     parameterListType: spec.parameterListType,
   };
   const rootScreens = normalizeScreens(rootSpec, spec.screens);
   if (spec.parameterListType) {
     state.parameterLists.push({
-      type: 'stack',
+      type: spec.type || 'stack',
       typePrefix: '',
       pathPrefix: '',
       parameterType: spec.parameterListType,
@@ -352,15 +354,12 @@ export default async function BuildTypes(
 
   const navTypesWritten = new Set<string>();
 
-  const hasStack = state.parameterLists.some((p) => p.type === 'stack');
   const hasNativeStack = state.parameterLists.some((p) => p.type === 'nativeStack');
   const typeImports = [];
   if (hasNativeStack) {
     typeImports.push("  import { NativeStackScreenProps } from '@react-navigation/native-stack';");
   }
-  if (hasStack) {
-    typeImports.push("  import { StackScreenProps } from '@react-navigation/stack';");
-  }
+  typeImports.push("  import { StackScreenProps } from '@react-navigation/stack';");
 
   const output = `${spec.preamble || ''}
 ${typeImports.join('\n')}
