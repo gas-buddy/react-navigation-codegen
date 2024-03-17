@@ -361,6 +361,16 @@ export default async function BuildTypes(
   }
   typeImports.push("  import { StackScreenProps } from '@react-navigation/stack';");
 
+  const globalDeclaration = spec.isRootParamList
+    ? `
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends ${spec.parameterListType} {}
+  }
+}`
+    : '';
+
   const output = `${spec.preamble || ''}
 ${typeImports.join('\n')}
   import { CompositeScreenProps } from '@react-navigation/native';
@@ -402,7 +412,7 @@ ${typeImports.join('\n')}
       )
       .map((p) => getStackScreenNavTypes(p, navTypesWritten))
       .join('\n')}
-  }
+  }${globalDeclaration}
 `;
 
   const options = await prettier.resolveConfig(prettierConfigSourceFile);

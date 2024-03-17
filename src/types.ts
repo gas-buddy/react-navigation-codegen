@@ -38,4 +38,5 @@ export interface ImportSpec {
 export interface NavigationSpecification extends NavigatorSpec {
   import: Array<ImportSpec>;
   preamble?: string;
+  isRootParamList?: boolean;
 }
