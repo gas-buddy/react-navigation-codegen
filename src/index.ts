@@ -306,8 +306,8 @@ function getStackScreenNavTypes(navigator: ParameterList, typesWritten: Set<stri
       if (navigator.parent?.parameterListType) {
         return `    '${name}': CompositeScreenProps<
           ${sType}<${navigator.parameterType}, typeof Nav.${navigator.typePrefix}${
-          navigator.typePrefix ? '.' : ''
-        }${screen.jsName}${screen.screens ? '.$name' : ''}>,
+            navigator.typePrefix ? '.' : ''
+          }${screen.jsName}${screen.screens ? '.$name' : ''}>,
           ${getComposites(navigator.parent)}
         >;`;
       } else {
@@ -323,6 +323,7 @@ function getStackScreenNavTypes(navigator: ParameterList, typesWritten: Set<stri
 export default async function BuildTypes(
   spec: NavigationSpecification,
   prettierConfigSourceFile: string,
+  options: { prettier: boolean } = { prettier: true },
 ) {
   const state: ParsedSpec = {
     parameterLists: [],
@@ -415,6 +416,9 @@ ${typeImports.join('\n')}
   }${globalDeclaration}
 `;
 
-  const options = await prettier.resolveConfig(prettierConfigSourceFile);
-  return prettier.format(output, { ...options, parser: 'typescript' });
+  if (options.prettier) {
+    const prettierOptions = await prettier.resolveConfig(prettierConfigSourceFile);
+    return prettier.format(output, { ...prettierOptions, parser: 'typescript' });
+  }
+  return output;
 }
