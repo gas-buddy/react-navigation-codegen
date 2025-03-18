@@ -7,7 +7,9 @@ import assert from 'assert';
 import minimist from 'minimist';
 import BuildTypes from './index';
 
-const argv = minimist(process.argv.slice(2));
+const argv = minimist(process.argv.slice(2), {
+  boolean: ['no-prettier'],
+});
 const [sourceFilename, destinationFilename] = argv._;
 
 const usage = `
@@ -35,7 +37,9 @@ function resolveConfig(source: string) {
 
 const resolvedConfig = resolveConfig(sourceFilename);
 
-BuildTypes(resolvedConfig, sourceFilename).then((tsOutput) => {
+BuildTypes(resolvedConfig, sourceFilename, {
+  prettier: !argv['no-prettier'],
+}).then((tsOutput) => {
   if (
     !fs.existsSync(destinationFilename) ||
     fs.readFileSync(destinationFilename, 'utf8') !== tsOutput

@@ -323,6 +323,7 @@ function getStackScreenNavTypes(navigator: ParameterList, typesWritten: Set<stri
 export default async function BuildTypes(
   spec: NavigationSpecification,
   prettierConfigSourceFile: string,
+  options: { prettier: boolean } = { prettier: true },
 ) {
   const state: ParsedSpec = {
     parameterLists: [],
@@ -415,6 +416,9 @@ ${typeImports.join('\n')}
   }${globalDeclaration}
 `;
 
-  const options = await prettier.resolveConfig(prettierConfigSourceFile);
-  return prettier.format(output, { ...options, parser: 'typescript' });
+  if (options.prettier) {
+    const prettierOptions = await prettier.resolveConfig(prettierConfigSourceFile);
+    return prettier.format(output, { ...prettierOptions, parser: 'typescript' });
+  }
+  return output;
 }

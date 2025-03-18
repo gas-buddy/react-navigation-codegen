@@ -1,6 +1,6 @@
 {
   "name": "@gasbuddy/react-navigation-codegen",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "description": "Type safe code generation for react-navigation based apps",
   "main": "build/index.js",
   "bin": "build/cli.js",
@@ -59,11 +59,13 @@
       "lcov"
     ]
   },
+  "peerDependencies": {
+    "prettier": ">2.0.0"
+  },
   "dependencies": {
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.8",
-    "mkdirp": "^3.0.1",
-    "prettier": "^3.5.3"
+    "mkdirp": "^3.0.1"
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
