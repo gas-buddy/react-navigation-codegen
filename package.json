@@ -31,17 +31,17 @@
   "license": "MIT",
   "devDependencies": {
     "@react-native-community/eslint-config": "^3.2.0",
-    "@types/js-yaml": "^4.0.5",
-    "@types/minimist": "^1.2.0",
-    "@types/node": "^18.11.9",
-    "@types/prettier": "^2.0.2",
+    "@types/js-yaml": "^4.0.9",
+    "@types/minimist": "^1.2.5",
+    "@types/node": "^22.13.10",
     "@types/tap": "^15.0.7",
     "@typescript-eslint/parser": "^5.42.0",
-    "cross-env": "^7.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.27.0",
+    "eslint-plugin-prettier": "^5.2.3",
     "tap": "^16.3.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.8.4"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   },
   "nyc": {
     "lines": 75,
@@ -61,8 +61,9 @@
   },
   "dependencies": {
     "js-yaml": "^4.1.0",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.8",
     "mkdirp": "^3.0.1",
-    "prettier": "^2.1.1"
-  }
+    "prettier": "^3.5.3"
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

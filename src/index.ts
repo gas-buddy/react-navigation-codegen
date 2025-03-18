@@ -306,8 +306,8 @@ function getStackScreenNavTypes(navigator: ParameterList, typesWritten: Set<stri
       if (navigator.parent?.parameterListType) {
         return `    '${name}': CompositeScreenProps<
           ${sType}<${navigator.parameterType}, typeof Nav.${navigator.typePrefix}${
-          navigator.typePrefix ? '.' : ''
-        }${screen.jsName}${screen.screens ? '.$name' : ''}>,
+            navigator.typePrefix ? '.' : ''
+          }${screen.jsName}${screen.screens ? '.$name' : ''}>,
           ${getComposites(navigator.parent)}
         >;`;
       } else {
